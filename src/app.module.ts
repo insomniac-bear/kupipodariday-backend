@@ -4,6 +4,7 @@ import { ConfigModule } from '@nestjs/config';
 import { DatabaseService } from './database/database.service';
 import configuration from './config/configuration';
 import { WinstonModule } from 'nest-winston';
+import { ThrottlerModule } from '@nestjs/throttler';
 import * as winston from 'winston';
 
 @Module({
@@ -24,6 +25,10 @@ import * as winston from 'winston';
         new winston.transports.Console({ format: winston.format.simple() }),
         new winston.transports.File({ filename: 'error.log', level: 'error' }),
       ],
+    }),
+    ThrottlerModule.forRoot({
+      ttl: 60,
+      limit: 10,
     }),
     TypeOrmModule.forRootAsync({
       useClass: DatabaseService,
