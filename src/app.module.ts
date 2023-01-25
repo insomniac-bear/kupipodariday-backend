@@ -5,6 +5,8 @@ import { DatabaseService } from './database/database.service';
 import configuration from './config/configuration';
 import { WinstonModule } from 'nest-winston';
 import { ThrottlerModule } from '@nestjs/throttler';
+import { UsersModule } from './users/users.module';
+import { AuthModule } from './auth/auth.module';
 import * as winston from 'winston';
 
 @Module({
@@ -34,6 +36,8 @@ import * as winston from 'winston';
       useClass: DatabaseService,
       inject: [DatabaseService],
     }),
+    UsersModule,
+    AuthModule,
   ],
   controllers: [],
   providers: [DatabaseService],

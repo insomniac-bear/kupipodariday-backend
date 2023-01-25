@@ -1,3 +1,5 @@
+import { User } from 'src/users/entities/user.entity';
+
 export default () => ({
   port: parseInt(process.env.PORT, 10) || 8000,
   database: {
@@ -7,7 +9,8 @@ export default () => ({
     username: process.env.DATABASE_USER || 'student',
     password: process.env.DATABASE_PASSWORD || 'student',
     database: process.env.DATABASE_NAME || 'kupipodariday',
-    entities: ['src/**/**.entity{.ts,.js}'],
+    entities: [User],
     synchronize: true,
   },
+  jwtSecret: process.env.JWT_SECRET || 'vErYsEcReTkEy',
 });
