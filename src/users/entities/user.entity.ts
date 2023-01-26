@@ -15,6 +15,7 @@ export class User {
   @Column({
     type: 'varchar',
     length: 30,
+    unique: true,
   })
   @IsString()
   @Length(2, 30)

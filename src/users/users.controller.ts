@@ -5,11 +5,15 @@ import {
   Body,
   Patch,
   Param,
-  Delete,
+  UseGuards,
+  Req,
+  UseInterceptors,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { JwtGuard } from 'src/guards/jwt.guard';
+import { FormatUserInterceptor } from 'src/interceptors/format-user.interceptor';
 
 @Controller('users')
 export class UsersController {
@@ -20,23 +24,25 @@ export class UsersController {
     return this.usersService.create(createUserDto);
   }
 
-  @Get()
-  findAll() {
-    return this.usersService.findAll();
+  @UseGuards(JwtGuard)
+  @UseInterceptors(FormatUserInterceptor)
+  @Get('/me')
+  findMe(@Req() req) {
+    return req.user;
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.usersService.findById(+id);
+  @UseGuards(JwtGuard)
+  @UseInterceptors(FormatUserInterceptor)
+  @Get(':username')
+  findOne(@Param('username') username: string) {
+    return this.usersService.findByUsername(username);
   }
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
+  @UseGuards(JwtGuard)
+  @UseInterceptors(FormatUserInterceptor)
+  @Patch('/me')
+  update(@Req() req, @Body() updateUserDto: UpdateUserDto) {
+    const { id } = req.user;
     return this.usersService.updateOne(+id, updateUserDto);
-  }
-
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.usersService.removeOne(+id);
   }
 }

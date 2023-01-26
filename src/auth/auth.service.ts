@@ -21,11 +21,7 @@ export class AuthService {
     const matched = await bcrypt.compare(password, user.password);
 
     if (user && matched) {
-      // Данное отключение правила линтера требуется для исключения поля пароля из ответа сервера
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      const { password, ...result } = user;
-
-      return result;
+      return user;
     }
 
     return null;

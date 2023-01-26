@@ -5,6 +5,8 @@ import { UpdateUserDto } from './dto/update-user.dto';
 import { User } from './entities/user.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
+import { ServerException } from 'src/exceptions/server.exception';
+import { ErrorCode } from 'src/exceptions/error-codes';
 
 @Injectable()
 export class UsersService {
@@ -35,16 +37,26 @@ export class UsersService {
   async findByUsername(username: string): Promise<User> {
     const user = await this.userRepository.findOneBy({ username });
 
+    if (!user) {
+      throw new ServerException(ErrorCode.UserNotFound);
+    }
+
     return user;
   }
 
   async updateOne(id: number, updateUserDto: UpdateUserDto) {
-    const user = await this.userRepository.update(id, updateUserDto);
-    return user;
-  }
-
-  async removeOne(id: number) {
-    const user = await this.findById(id);
-    return this.userRepository.remove(user);
+    if (updateUserDto.hasOwnProperty('password')) {
+      await bcrypt.hash(updateUserDto.password, 10).then((hashed) =>
+        this.userRepository.update(
+          { id },
+          {
+            ...updateUserDto,
+            password: hashed,
+          },
+        ),
+      );
+    }
+    await this.userRepository.update({ id }, updateUserDto);
+    return await this.userRepository.findOneBy({ id });
   }
 }
