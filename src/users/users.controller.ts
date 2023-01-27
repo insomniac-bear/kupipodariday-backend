@@ -45,4 +45,11 @@ export class UsersController {
     const { id } = req.user;
     return this.usersService.updateOne(+id, updateUserDto);
   }
+
+  @UseGuards(JwtGuard)
+  // @UseInterceptors(FormatUserInterceptor)
+  @Post('find')
+  async findMany(@Body('query') query: string) {
+    return await this.usersService.findMany(query);
+  }
 }
