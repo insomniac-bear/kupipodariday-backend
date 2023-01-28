@@ -5,6 +5,7 @@ import {
   NestInterceptor,
 } from '@nestjs/common';
 import { Observable, map } from 'rxjs';
+import { User } from 'src/users/entities/user.entity';
 
 @Injectable()
 export class FormatUserInterceptor implements NestInterceptor {
@@ -13,14 +14,17 @@ export class FormatUserInterceptor implements NestInterceptor {
     next: CallHandler<any>,
   ): Observable<any> | Promise<Observable<any>> {
     return next.handle().pipe(
-      map((user) => ({
-        id: user.id,
-        username: user.username,
-        about: user.about,
-        avatar: user.avatar,
-        createdAt: user.createdAt,
-        updatedAt: user.updatedAt,
-      })),
+      map((data: User | User[]) => {
+        if (Array.isArray(data)) {
+          for (const user of data) {
+            delete user.password;
+          }
+        } else {
+          delete data.password;
+        }
+
+        return data;
+      }),
     );
   }
 }

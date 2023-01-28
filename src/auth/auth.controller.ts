@@ -4,7 +4,7 @@ import { UsersService } from 'src/users/users.service';
 import { LocalGuard } from 'src/guards/auth.guard';
 import { CreateUserDto } from 'src/users/dto/create-user.dto';
 
-@Controller('auth')
+@Controller()
 export class AuthController {
   constructor(
     private readonly userService: UsersService,

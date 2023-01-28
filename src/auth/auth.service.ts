@@ -1,6 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
+import { ErrorCode } from 'src/exceptions/error-codes';
+import { ServerException } from 'src/exceptions/server.exception';
 import { User } from 'src/users/entities/user.entity';
 import { UsersService } from 'src/users/users.service';
 
@@ -18,12 +20,17 @@ export class AuthService {
 
   async validatePassword(username: string, password: string) {
     const user = await this.userService.findByUsername(username);
-    const matched = await bcrypt.compare(password, user.password);
 
-    if (user && matched) {
-      return user;
+    if (!user) {
+      throw new ServerException(ErrorCode.LoginOrPasswordIncorrect);
     }
 
-    return null;
+    const matched = await bcrypt.compare(password, user.password);
+
+    if (!matched) {
+      throw new ServerException(ErrorCode.LoginOrPasswordIncorrect);
+    }
+
+    return user;
   }
 }

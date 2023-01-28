@@ -15,7 +15,7 @@ export class UsersService {
     private userRepository: Repository<User>,
   ) {}
 
-  async create(createUserDto: CreateUserDto): Promise<User> {
+  create(createUserDto: CreateUserDto): Promise<User> {
     return bcrypt.hash(createUserDto.password, 10).then((hashed) =>
       this.userRepository.save({
         ...createUserDto,
@@ -24,20 +24,12 @@ export class UsersService {
     );
   }
 
-  async findById(id: number): Promise<User> {
-    const user = await this.userRepository.findOneBy({ id });
-
-    return user;
+  findById(id: number): Promise<User> {
+    return this.userRepository.findOneBy({ id });
   }
 
   async findByUsername(username: string): Promise<User> {
-    const user = await this.userRepository.findOneBy({ username });
-
-    if (!user) {
-      throw new ServerException(ErrorCode.UserNotFound);
-    }
-
-    return user;
+    return await this.userRepository.findOneBy({ username });
   }
 
   async updateOne(id: number, updateUserDto: UpdateUserDto) {

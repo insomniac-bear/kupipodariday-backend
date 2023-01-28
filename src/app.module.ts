@@ -7,6 +7,9 @@ import { WinstonModule } from 'nest-winston';
 import { ThrottlerModule } from '@nestjs/throttler';
 import { UsersModule } from './users/users.module';
 import { AuthModule } from './auth/auth.module';
+import { WishesModule } from './wishes/wishes.module';
+import { WishlistsModule } from './wishlists/wishlists.module';
+import { OffersModule } from './offers/offers.module';
 import * as winston from 'winston';
 
 @Module({
@@ -38,6 +41,9 @@ import * as winston from 'winston';
     }),
     UsersModule,
     AuthModule,
+    WishesModule,
+    WishlistsModule,
+    OffersModule,
   ],
   controllers: [],
   providers: [DatabaseService],

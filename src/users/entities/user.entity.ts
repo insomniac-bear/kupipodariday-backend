@@ -2,10 +2,15 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  ManyToMany,
+  OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
 import { Length, IsEmail, IsString, IsUrl } from 'class-validator';
+import { Wish } from 'src/wishes/entities/wish.entity';
+import { Wishlist } from 'src/wishlists/entities/wishlist.entity';
+import { Offer } from 'src/offers/entities/offer.entity';
 
 @Entity()
 export class User {
@@ -53,4 +58,13 @@ export class User {
 
   @UpdateDateColumn()
   updatedAt: Date;
+
+  @ManyToMany(() => Wish, (wish) => wish.users)
+  wishes: Wish[];
+
+  @OneToMany(() => Wishlist, (wishlist) => wishlist.user)
+  wishlist: Wishlist;
+
+  @OneToMany(() => Offer, (offer) => offer.id)
+  offers: Offer[];
 }
