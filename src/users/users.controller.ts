@@ -15,20 +15,37 @@ import { JwtGuard } from 'src/guards/jwt.guard';
 import { FormatUserInterceptor } from 'src/interceptors/format-user.interceptor';
 import { ServerException } from 'src/exceptions/server.exception';
 import { ErrorCode } from 'src/exceptions/error-codes';
+import { FindingWishesParam, WishesService } from 'src/wishes/wishes.service';
 
 @UseInterceptors(FormatUserInterceptor)
 @UseGuards(JwtGuard)
 @Controller('users')
 export class UsersController {
-  constructor(private readonly usersService: UsersService) {}
+  constructor(
+    private readonly usersService: UsersService,
+    private readonly wishesService: WishesService,
+  ) {}
 
-  // @UseGuards(JwtGuard)
   @Get('/me')
   findMe(@Req() req) {
     return req.user;
   }
 
-  // @UseGuards(JwtGuard)
+  @Patch('/me')
+  update(@Req() req, @Body() updateUserDto: UpdateUserDto) {
+    const { id } = req.user;
+    return this.usersService.updateOne(+id, updateUserDto);
+  }
+
+  @Get('/me/wishes')
+  findWishes(@Req() req) {
+    const { id } = req.user;
+    return this.wishesService.findWishesByParam(
+      FindingWishesParam.ByUserId,
+      id,
+    );
+  }
+
   @Get(':username')
   async findOne(@Param('username') username: string) {
     const user = await this.usersService.findByUsername(username);
@@ -40,14 +57,6 @@ export class UsersController {
     return user;
   }
 
-  // @UseGuards(JwtGuard)
-  @Patch('/me')
-  update(@Req() req, @Body() updateUserDto: UpdateUserDto) {
-    const { id } = req.user;
-    return this.usersService.updateOne(+id, updateUserDto);
-  }
-
-  // @UseGuards(JwtGuard)
   @Post('find')
   async findMany(@Body('query') query: string) {
     return await this.usersService.findMany(query);

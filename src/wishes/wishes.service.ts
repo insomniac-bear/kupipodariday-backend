@@ -10,6 +10,12 @@ export enum TypeOfGetWish {
   Top = 'Top',
 }
 
+export enum FindingWishesParam {
+  ById = 'id',
+  ByName = 'name',
+  ByUserId = 'userId',
+}
+
 @Injectable()
 export class WishesService {
   constructor(
@@ -24,11 +30,16 @@ export class WishesService {
     return wish;
   }
 
+  findWishesByParam(paramName: FindingWishesParam, paramValue: string) {
+    return this.wishRepository.find({
+      where: {
+        [paramName]: paramValue,
+      },
+    });
+  }
+
   findLastWishes() {
     return this.wishRepository.find({
-      relations: {
-        users: true,
-      },
       order: {
         createdAt: 'DESC',
       },

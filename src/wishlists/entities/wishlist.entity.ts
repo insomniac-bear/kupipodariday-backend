@@ -1,10 +1,12 @@
 import { IsString, IsUrl } from 'class-validator';
 import { User } from 'src/users/entities/user.entity';
+import { Wish } from 'src/wishes/entities/wish.entity';
 import {
   Column,
   CreateDateColumn,
   Entity,
   ManyToOne,
+  OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
@@ -42,4 +44,7 @@ export class Wishlist {
 
   @ManyToOne(() => User, (user) => user.wishlist)
   user: User;
+
+  @OneToMany(() => Wish, (wish) => wish.items)
+  wishId: Wish;
 }
