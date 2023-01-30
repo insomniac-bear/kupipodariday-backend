@@ -30,18 +30,31 @@ export class WishesController {
     return this.wishesService.findLastWishes();
   }
 
+  @Get('/top')
+  findTopWishes() {
+    return this.wishesService.findTopWishes();
+  }
+
   @Get(':id')
   findOne(@Param('id') id: string) {
-    return this.wishesService.findOne(+id);
+    return this.wishesService.findOne(Number(id));
   }
 
+  @UseGuards(JwtGuard)
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateWishDto: UpdateWishDto) {
-    return this.wishesService.update(+id, updateWishDto);
+  update(
+    @Param('id') id: string,
+    @Req() req,
+    @Body() updateWishDto: UpdateWishDto,
+  ) {
+    const userId = req.user.id;
+    return this.wishesService.update(Number(id), Number(userId), updateWishDto);
   }
 
+  @UseGuards(JwtGuard)
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.wishesService.remove(+id);
+  remove(@Param('id') id: string, @Req() req) {
+    const userId = req.user.id;
+    return this.wishesService.remove(Number(id), Number(userId));
   }
 }

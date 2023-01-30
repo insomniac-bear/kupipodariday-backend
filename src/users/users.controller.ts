@@ -38,7 +38,7 @@ export class UsersController {
   }
 
   @Get('/me/wishes')
-  async findWishes(@Req() req) {
+  async findMeWishes(@Req() req) {
     const { id } = req.user;
 
     return this.wishesService.findUsersWishes(id);
@@ -53,6 +53,17 @@ export class UsersController {
     }
 
     return user;
+  }
+
+  @Get(':username/wishes')
+  async findUsersWishes(@Param('username') username: string) {
+    const user = await this.usersService.findByUsername(username);
+
+    if (!user) {
+      throw new ServerException(ErrorCode.UserNotFound);
+    }
+
+    return this.wishesService.findUsersWishes(user.id);
   }
 
   @Post('find')

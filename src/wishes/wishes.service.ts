@@ -5,6 +5,8 @@ import { CreateWishDto } from './dto/create-wish.dto';
 import { UpdateWishDto } from './dto/update-wish.dto';
 import { Wish } from './entities/wish.entity';
 import { User } from 'src/users/entities/user.entity';
+import { ServerException } from 'src/exceptions/server.exception';
+import { ErrorCode } from 'src/exceptions/error-codes';
 
 export enum TypeOfGetWish {
   Last = 'Last',
@@ -46,16 +48,12 @@ export class WishesService {
     });
   }
 
-  findWishesByParam(paramName: FindingWishesParam, paramValue: string) {
-    return this.wishRepository.find({
-      where: {
-        [paramName]: paramValue,
-      },
-    });
-  }
-
   findLastWishes() {
     return this.wishRepository.find({
+      relations: {
+        owner: true,
+        offers: true,
+      },
       order: {
         createdAt: 'DESC',
       },
@@ -63,15 +61,57 @@ export class WishesService {
     });
   }
 
+  findTopWishes() {
+    return this.wishRepository.find({
+      relations: {
+        owner: true,
+        offers: true,
+      },
+      order: {
+        copied: 'DESC',
+      },
+      take: 20,
+    });
+  }
+
   findOne(id: number) {
-    return `This action returns a #${id} wish`;
+    return this.wishRepository.findOne({
+      where: { id },
+      relations: {
+        owner: true,
+        offers: true,
+      },
+    });
   }
 
-  update(id: number, updateWishDto: UpdateWishDto) {
-    return `This action updates a #${id} wish`;
+  async update(id: number, userId: number, updateWishDto: UpdateWishDto) {
+    const candidate = await this.findOne(id);
+
+    if (!candidate) {
+      throw new ServerException(ErrorCode.WishNotFound);
+    }
+
+    if (candidate.owner.id !== userId) {
+      throw new ServerException(ErrorCode.NoRightsForEdit);
+    }
+
+    return this.wishRepository.save({
+      id,
+      ...updateWishDto,
+    });
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} wish`;
+  async remove(id: number, userId: number) {
+    const candidate = await this.findOne(id);
+
+    if (!candidate) {
+      throw new ServerException(ErrorCode.WishNotFound);
+    }
+
+    if (candidate.owner.id !== userId) {
+      throw new ServerException(ErrorCode.NoRightsForEdit);
+    }
+
+    return this.wishRepository.delete({ id });
   }
 }
