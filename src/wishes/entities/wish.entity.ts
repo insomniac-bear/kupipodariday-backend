@@ -75,9 +75,13 @@ export class Wish {
   @ManyToOne(() => User, (user) => user.wishes)
   owner: User;
 
-  @ManyToOne(() => Wishlist, (wishlist) => wishlist.wishId)
-  items: Wishlist;
+  @ManyToOne(() => Wishlist, (wishlist) => wishlist.wishId, {
+    cascade: true,
+  })
+  items: Wishlist[];
 
-  @OneToMany(() => Offer, (offer) => offer.item)
+  @OneToMany(() => Offer, (offer) => offer.item, {
+    cascade: true,
+  })
   offers: Offer[];
 }

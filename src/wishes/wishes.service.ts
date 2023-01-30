@@ -1,9 +1,10 @@
 import { Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
 import { CreateWishDto } from './dto/create-wish.dto';
 import { UpdateWishDto } from './dto/update-wish.dto';
-import { InjectRepository } from '@nestjs/typeorm';
 import { Wish } from './entities/wish.entity';
-import { Repository } from 'typeorm';
+import { User } from 'src/users/entities/user.entity';
 
 export enum TypeOfGetWish {
   Last = 'Last',
@@ -13,7 +14,7 @@ export enum TypeOfGetWish {
 export enum FindingWishesParam {
   ById = 'id',
   ByName = 'name',
-  ByUserId = 'userId',
+  ByOwnerId = 'ownerId',
 }
 
 @Injectable()
@@ -21,13 +22,28 @@ export class WishesService {
   constructor(
     @InjectRepository(Wish)
     private wishRepository: Repository<Wish>,
+    @InjectRepository(User)
+    private userRepository: Repository<User>,
   ) {}
 
-  create(id: string, createWishDto: CreateWishDto) {
+  async create(id: number, createWishDto: CreateWishDto) {
+    const user = await this.userRepository.findOneBy({ id });
+
     const wish = this.wishRepository.save({
       ...createWishDto,
+      owner: user,
     });
     return wish;
+  }
+
+  findUsersWishes(id: number) {
+    return this.wishRepository.find({
+      where: {
+        owner: {
+          id,
+        },
+      },
+    });
   }
 
   findWishesByParam(paramName: FindingWishesParam, paramValue: string) {

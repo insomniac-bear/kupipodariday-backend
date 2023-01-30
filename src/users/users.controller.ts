@@ -15,7 +15,7 @@ import { JwtGuard } from 'src/guards/jwt.guard';
 import { FormatUserInterceptor } from 'src/interceptors/format-user.interceptor';
 import { ServerException } from 'src/exceptions/server.exception';
 import { ErrorCode } from 'src/exceptions/error-codes';
-import { FindingWishesParam, WishesService } from 'src/wishes/wishes.service';
+import { WishesService } from 'src/wishes/wishes.service';
 
 @UseInterceptors(FormatUserInterceptor)
 @UseGuards(JwtGuard)
@@ -38,12 +38,10 @@ export class UsersController {
   }
 
   @Get('/me/wishes')
-  findWishes(@Req() req) {
+  async findWishes(@Req() req) {
     const { id } = req.user;
-    return this.wishesService.findWishesByParam(
-      FindingWishesParam.ByUserId,
-      id,
-    );
+
+    return this.wishesService.findUsersWishes(id);
   }
 
   @Get(':username')
