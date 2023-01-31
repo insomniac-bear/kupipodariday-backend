@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { DataSource, Repository } from 'typeorm';
 import { CreateWishDto } from './dto/create-wish.dto';
 import { UpdateWishDto } from './dto/update-wish.dto';
 import { Wish } from './entities/wish.entity';
@@ -22,6 +22,7 @@ export enum FindingWishesParam {
 @Injectable()
 export class WishesService {
   constructor(
+    private dataSource: DataSource,
     @InjectRepository(Wish)
     private wishRepository: Repository<Wish>,
     @InjectRepository(User)
@@ -112,6 +113,50 @@ export class WishesService {
       throw new ServerException(ErrorCode.NoRightsForEdit);
     }
 
-    return this.wishRepository.delete({ id });
+    await this.wishRepository.delete({ id });
+
+    return {};
+  }
+
+  async copyWish(wishId: number, userId: number) {
+    const originalWish = await this.wishRepository.findOneBy({ id: wishId });
+
+    if (!originalWish) {
+      throw new ServerException(ErrorCode.WishNotFound);
+    }
+    const user = await this.userRepository.findOneBy({ id: userId });
+
+    if (!user) {
+      throw new ServerException(ErrorCode.UserNotFound);
+    }
+
+    const wishData: CreateWishDto = {
+      name: originalWish.name,
+      description: originalWish.description,
+      link: originalWish.link,
+      image: originalWish.image,
+      price: originalWish.price,
+    };
+
+    originalWish.copied += 1;
+
+    const queryRunner = this.dataSource.createQueryRunner();
+    await queryRunner.connect();
+    await queryRunner.startTransaction();
+
+    try {
+      await queryRunner.manager.insert(Wish, {
+        ...wishData,
+        owner: user,
+      });
+      await queryRunner.manager.save(originalWish);
+      await queryRunner.commitTransaction();
+      return {};
+    } catch (err) {
+      await queryRunner.rollbackTransaction();
+      return false;
+    } finally {
+      await queryRunner.release();
+    }
   }
 }
