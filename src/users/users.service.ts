@@ -32,20 +32,27 @@ export class UsersService {
     return await this.userRepository.findOneBy({ username });
   }
 
-  async updateOne(id: number, updateUserDto: UpdateUserDto) {
+  async updateOne(user: User, updateUserDto: UpdateUserDto) {
+    let updatedUser = {};
+
     if (updateUserDto.hasOwnProperty('password')) {
-      await bcrypt.hash(updateUserDto.password, 10).then((hashed) =>
-        this.userRepository.update(
-          { id },
-          {
+      updatedUser = await bcrypt
+        .hash(updateUserDto.password, 10)
+        .then((hashed) =>
+          this.userRepository.save({
+            ...user,
             ...updateUserDto,
             password: hashed,
-          },
-        ),
-      );
+          }),
+        );
+    } else {
+      updatedUser = await this.userRepository.save({
+        ...user,
+        ...updateUserDto,
+      });
     }
-    await this.userRepository.update({ id }, updateUserDto);
-    return await this.userRepository.findOneBy({ id });
+
+    return updatedUser;
   }
 
   async findMany(query: string) {

@@ -21,6 +21,12 @@ export class Offer {
   })
   amount: number;
 
+  @Column({
+    type: 'boolean',
+    default: false,
+  })
+  hidden: boolean;
+
   @CreateDateColumn()
   createdAt: Date;
 

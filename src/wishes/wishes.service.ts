@@ -8,17 +8,6 @@ import { User } from 'src/users/entities/user.entity';
 import { ServerException } from 'src/exceptions/server.exception';
 import { ErrorCode } from 'src/exceptions/error-codes';
 
-export enum TypeOfGetWish {
-  Last = 'Last',
-  Top = 'Top',
-}
-
-export enum FindingWishesParam {
-  ById = 'id',
-  ByName = 'name',
-  ByOwnerId = 'ownerId',
-}
-
 @Injectable()
 export class WishesService {
   constructor(
@@ -29,9 +18,7 @@ export class WishesService {
     private userRepository: Repository<User>,
   ) {}
 
-  async create(id: number, createWishDto: CreateWishDto) {
-    const user = await this.userRepository.findOneBy({ id });
-
+  async create(user: User, createWishDto: CreateWishDto) {
     const wish = this.wishRepository.save({
       ...createWishDto,
       owner: user,

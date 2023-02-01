@@ -33,8 +33,7 @@ export class UsersController {
 
   @Patch('/me')
   update(@Req() req, @Body() updateUserDto: UpdateUserDto) {
-    const { id } = req.user;
-    return this.usersService.updateOne(+id, updateUserDto);
+    return this.usersService.updateOne(req.user, updateUserDto);
   }
 
   @Get('/me/wishes')

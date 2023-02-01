@@ -9,6 +9,8 @@ export enum ErrorCode {
   WishNotFound = 105,
   NoRightsForEdit = 106,
   NoRightsForRemove = 107,
+  CantOfferForSelf = 108,
+  OfferIsLarge = 109,
 }
 
 export const code2message = new Map<ErrorCode, string>([
@@ -20,6 +22,8 @@ export const code2message = new Map<ErrorCode, string>([
   [ErrorCode.WishNotFound, 'Подарок не найден'],
   [ErrorCode.NoRightsForEdit, 'Недостаточно прав для редактирования'],
   [ErrorCode.NoRightsForRemove, 'Недостаточно прав для удаления'],
+  [ErrorCode.CantOfferForSelf, 'Невозможно скинуться на свой подарок'],
+  [ErrorCode.OfferIsLarge, 'Размер вклада слишком большой'],
 ]);
 
 export const code2status = new Map<ErrorCode, HttpStatus>([
@@ -31,4 +35,6 @@ export const code2status = new Map<ErrorCode, HttpStatus>([
   [ErrorCode.WishNotFound, HttpStatus.NOT_FOUND],
   [ErrorCode.NoRightsForEdit, HttpStatus.FORBIDDEN],
   [ErrorCode.NoRightsForRemove, HttpStatus.FORBIDDEN],
+  [ErrorCode.CantOfferForSelf, HttpStatus.FORBIDDEN],
+  [ErrorCode.OfferIsLarge, HttpStatus.BAD_REQUEST],
 ]);
