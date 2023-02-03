@@ -61,7 +61,7 @@ export class User {
   @OneToMany(() => Wish, (wish) => wish.owner)
   wishes: Wish[];
 
-  @OneToMany(() => Wishlist, (wishlist) => wishlist.user)
+  @OneToMany(() => Wishlist, (wishlist) => wishlist.owner)
   wishlist: Wishlist;
 
   @OneToMany(() => Offer, (offer) => offer.id)

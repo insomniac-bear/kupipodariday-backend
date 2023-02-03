@@ -1,7 +1,6 @@
 import { IsNumber, IsString, IsUrl, Length } from 'class-validator';
 import { Offer } from 'src/offers/entities/offer.entity';
 import { User } from 'src/users/entities/user.entity';
-import { Wishlist } from 'src/wishlists/entities/wishlist.entity';
 import {
   Column,
   CreateDateColumn,
@@ -74,11 +73,6 @@ export class Wish {
 
   @ManyToOne(() => User, (user) => user.wishes)
   owner: User;
-
-  @ManyToOne(() => Wishlist, (wishlist) => wishlist.wishId, {
-    cascade: true,
-  })
-  items: Wishlist[];
 
   @OneToMany(() => Offer, (offer) => offer.item, {
     cascade: true,

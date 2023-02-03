@@ -5,8 +5,9 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  JoinTable,
+  ManyToMany,
   ManyToOne,
-  OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
@@ -26,6 +27,7 @@ export class Wishlist {
   @Column({
     type: 'varchar',
     length: 1500,
+    nullable: true,
   })
   @IsString()
   description: string;
@@ -42,9 +44,12 @@ export class Wishlist {
   @UpdateDateColumn()
   updatedAt: Date;
 
-  @ManyToOne(() => User, (user) => user.wishlist)
-  user: User;
+  @ManyToOne(() => User, (user) => user.wishlist, {
+    cascade: true,
+  })
+  owner: User;
 
-  @OneToMany(() => Wish, (wish) => wish.items)
-  wishId: Wish;
+  @ManyToMany(() => Wish)
+  @JoinTable()
+  items: Wish[];
 }

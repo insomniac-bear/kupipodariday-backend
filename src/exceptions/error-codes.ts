@@ -9,21 +9,25 @@ export enum ErrorCode {
   WishNotFound = 105,
   NoRightsForEdit = 106,
   NoRightsForRemove = 107,
-  CantOfferForSelf = 108,
-  OfferIsLarge = 109,
+  CantEdit = 108,
+  CantOfferForSelf = 109,
+  OfferIsLarge = 110,
+  ListNotFound = 111,
 }
 
 export const code2message = new Map<ErrorCode, string>([
-  [ErrorCode.LoginOrPasswordIncorrect, 'Login or password is incorrect'],
-  [ErrorCode.UserAlreadyExist, 'User already exist'],
-  [ErrorCode.AccessDenied, 'Access denied'],
-  [ErrorCode.UserNotFound, 'User not found'],
-  [ErrorCode.UsersNotFound, 'Search result is empty'],
+  [ErrorCode.LoginOrPasswordIncorrect, 'Некорректная пара логин-пароль'],
+  [ErrorCode.UserAlreadyExist, 'Такой пользователь уже существует'],
+  [ErrorCode.AccessDenied, 'Доступ запрещен'],
+  [ErrorCode.UserNotFound, 'Пользователь не найден'],
+  [ErrorCode.UsersNotFound, 'Поиск пользователей не дал результатов'],
   [ErrorCode.WishNotFound, 'Подарок не найден'],
   [ErrorCode.NoRightsForEdit, 'Недостаточно прав для редактирования'],
   [ErrorCode.NoRightsForRemove, 'Недостаточно прав для удаления'],
+  [ErrorCode.CantEdit, 'Невозможно редактировать, т.к. есть сборы'],
   [ErrorCode.CantOfferForSelf, 'Невозможно скинуться на свой подарок'],
   [ErrorCode.OfferIsLarge, 'Размер вклада слишком большой'],
+  [ErrorCode.ListNotFound, 'Список подарков не найден'],
 ]);
 
 export const code2status = new Map<ErrorCode, HttpStatus>([
@@ -35,6 +39,8 @@ export const code2status = new Map<ErrorCode, HttpStatus>([
   [ErrorCode.WishNotFound, HttpStatus.NOT_FOUND],
   [ErrorCode.NoRightsForEdit, HttpStatus.FORBIDDEN],
   [ErrorCode.NoRightsForRemove, HttpStatus.FORBIDDEN],
+  [ErrorCode.CantEdit, HttpStatus.BAD_REQUEST],
   [ErrorCode.CantOfferForSelf, HttpStatus.FORBIDDEN],
   [ErrorCode.OfferIsLarge, HttpStatus.BAD_REQUEST],
+  [ErrorCode.ListNotFound, HttpStatus.NOT_FOUND],
 ]);

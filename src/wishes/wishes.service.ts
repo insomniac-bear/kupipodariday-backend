@@ -79,6 +79,10 @@ export class WishesService {
       throw new ServerException(ErrorCode.WishNotFound);
     }
 
+    if (candidate.offers.length > 0) {
+      throw new ServerException(ErrorCode.CantEdit);
+    }
+
     if (candidate.owner.id !== userId) {
       throw new ServerException(ErrorCode.NoRightsForEdit);
     }
