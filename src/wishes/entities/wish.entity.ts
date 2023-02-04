@@ -1,4 +1,4 @@
-import { IsNumber, IsString, IsUrl, Length } from 'class-validator';
+import { IsNumber, IsString, IsUrl, Length, Max, Min } from 'class-validator';
 import { Offer } from 'src/offers/entities/offer.entity';
 import { User } from 'src/users/entities/user.entity';
 import {
@@ -41,6 +41,7 @@ export class Wish {
     precision: 10,
     scale: 2,
   })
+  @IsNumber()
   price: number;
 
   @Column({
@@ -49,6 +50,7 @@ export class Wish {
     scale: 2,
     default: 0,
   })
+  @IsNumber()
   raised: number;
 
   @Column({
@@ -56,6 +58,8 @@ export class Wish {
     length: 1024,
   })
   @IsString()
+  @Min(1)
+  @Max(1024)
   description: string;
 
   @Column({

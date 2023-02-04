@@ -8,13 +8,16 @@ import {
   Delete,
   UseGuards,
   Req,
+  UseInterceptors,
 } from '@nestjs/common';
 import { WishlistsService } from './wishlists.service';
 import { CreateWishlistDto } from './dto/create-wishlist.dto';
 import { UpdateWishlistDto } from './dto/update-wishlist.dto';
 import { JwtGuard } from 'src/guards/jwt.guard';
+import { FormatWishInterceptor } from 'src/interceptors/format-wish.interceptor';
 
 @UseGuards(JwtGuard)
+@UseInterceptors(FormatWishInterceptor)
 @Controller('wishlistlists')
 export class WishlistsController {
   constructor(private readonly wishlistsService: WishlistsService) {}

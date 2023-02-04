@@ -1,4 +1,4 @@
-import { IsString, IsUrl } from 'class-validator';
+import { IsString, IsUrl, Max, Min } from 'class-validator';
 import { User } from 'src/users/entities/user.entity';
 import { Wish } from 'src/wishes/entities/wish.entity';
 import {
@@ -22,6 +22,8 @@ export class Wishlist {
     length: 250,
   })
   @IsString()
+  @Min(1)
+  @Max(250)
   name: string;
 
   @Column({
@@ -30,6 +32,7 @@ export class Wishlist {
     nullable: true,
   })
   @IsString()
+  @Max(1500)
   description: string;
 
   @Column({
